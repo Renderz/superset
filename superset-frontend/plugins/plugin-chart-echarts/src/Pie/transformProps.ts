@@ -136,16 +136,8 @@ function getTotalValuePadding({
 export default function transformProps(
   chartProps: EchartsPieChartProps,
 ): PieChartTransformedProps {
-  const {
-    formData,
-    height,
-    hooks,
-    filterState,
-    queriesData,
-    width,
-    theme,
-    ownState,
-  } = chartProps;
+  const { formData, height, hooks, filterState, queriesData, width, theme } =
+    chartProps;
   const { data = [] } = queriesData[0];
   const coltypeMapping = getColtypesMapping(queriesData[0]);
 
@@ -176,6 +168,14 @@ export default function transformProps(
     ...DEFAULT_PIE_FORM_DATA,
     ...formData,
   };
+
+  const ownState = {
+    ...(chartProps.ownState.drilldown
+      ? {}
+      : { drilldown: DrillDown.fromHierarchy(formData.groupby as string[]) }),
+    ...chartProps.ownState,
+  };
+
   const groupby =
     drillDown && ownState?.drilldown
       ? [DrillDown.getColumn(ownState.drilldown, [])]
