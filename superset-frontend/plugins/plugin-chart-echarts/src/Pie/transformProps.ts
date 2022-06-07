@@ -25,6 +25,7 @@ import {
   getTimeFormatter,
   NumberFormats,
   NumberFormatter,
+  DrillDown,
   t,
 } from '@superset-ui/core';
 import { CallbackDataParams } from 'echarts/types/src/util/types';
@@ -135,15 +136,23 @@ function getTotalValuePadding({
 export default function transformProps(
   chartProps: EchartsPieChartProps,
 ): PieChartTransformedProps {
-  const { formData, height, hooks, filterState, queriesData, width, theme } =
-    chartProps;
+  const {
+    formData,
+    height,
+    hooks,
+    filterState,
+    queriesData,
+    width,
+    theme,
+    ownState,
+  } = chartProps;
   const { data = [] } = queriesData[0];
   const coltypeMapping = getColtypesMapping(queriesData[0]);
 
   const {
     colorScheme,
     donut,
-    groupby,
+    groupby: hierarchyOrColumns,
     innerRadius,
     labelsOutside,
     labelLine,
@@ -161,11 +170,16 @@ export default function transformProps(
     emitFilter,
     sliceId,
     showTotal,
+    drillDown,
   }: EchartsPieFormData = {
     ...DEFAULT_LEGEND_FORM_DATA,
     ...DEFAULT_PIE_FORM_DATA,
     ...formData,
   };
+  const groupby =
+    drillDown && ownState?.drilldown
+      ? [DrillDown.getColumn(ownState.drilldown, [])]
+      : hierarchyOrColumns;
   const metricLabel = getMetricLabel(metric);
   const groupbyLabels = groupby.map(getColumnLabel);
   const minShowLabelAngle = (showLabelsThreshold || 0) * 3.6;
@@ -333,6 +347,7 @@ export default function transformProps(
     echartOptions,
     setDataMask,
     emitFilter,
+    ownState,
     labelMap,
     groupby,
     selectedValues,

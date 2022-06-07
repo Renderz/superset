@@ -18,7 +18,13 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { styled, logging, t, ensureIsArray } from '@superset-ui/core';
+import {
+  styled,
+  logging,
+  t,
+  ensureIsArray,
+  DrillDown,
+} from '@superset-ui/core';
 
 import { isFeatureEnabled, FeatureFlag } from 'src/featureFlags';
 import { PLACEHOLDER_DATASOURCE } from 'src/dashboard/constants';
@@ -127,6 +133,12 @@ class Chart extends React.PureComponent {
   }
 
   componentDidMount() {
+    if (this.props.formData?.drillDown) {
+      const drilldown = DrillDown.fromHierarchy(this.props.formData.groupby);
+      this.props.actions.updateDataMask(this.props.chartId, {
+        ownState: { drilldown },
+      });
+    }
     // during migration, hold chart queries before user choose review or cancel
     if (
       this.props.triggerQuery &&
@@ -136,7 +148,13 @@ class Chart extends React.PureComponent {
     }
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    if (this.props.formData?.drillDown && !prevProps.formData?.drillDown) {
+      const drilldown = DrillDown.fromHierarchy(this.props.formData.groupby);
+      this.props.actions.updateDataMask(this.props.chartId, {
+        ownState: { drilldown },
+      });
+    }
     // during migration, hold chart queries before user choose review or cancel
     if (
       this.props.triggerQuery &&
