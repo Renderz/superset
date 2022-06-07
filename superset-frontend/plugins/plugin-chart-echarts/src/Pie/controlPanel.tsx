@@ -55,7 +55,7 @@ const config: ControlPanelConfig = {
       expanded: true,
       controlSetRows: [
         ['groupby'],
-        !isFeatureEnabled(FeatureFlag.DASHBOARD_DRILL_DOWN)
+        isFeatureEnabled(FeatureFlag.DASHBOARD_DRILL_DOWN)
           ? [
               {
                 name: 'drillDown',
