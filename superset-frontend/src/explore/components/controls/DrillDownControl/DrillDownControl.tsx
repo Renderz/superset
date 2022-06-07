@@ -21,6 +21,7 @@ import ControlHeader from 'src/explore/components/ControlHeader';
 import { ExploreActions } from 'src/explore/actions/exploreActions';
 import Checkbox from 'src/components/Checkbox';
 import { DrillDown } from '@superset-ui/core';
+import { updateDataMask } from 'src/dataMask/actions';
 
 type drillDownProps = {
   value: boolean;
@@ -38,11 +39,11 @@ export default function DrillDownControl(props: drillDownProps) {
     const chartId = props.chartId.toString();
     if (!props.value) {
       const drilldown = DrillDown.fromHierarchy(props.columns);
-      props.actions.updateDataMask(chartId, {
+      updateDataMask(chartId, {
         ownState: { drilldown },
       });
     } else {
-      props.actions.updateDataMask(chartId, { ownState: {} });
+      updateDataMask(chartId, { ownState: {} });
     }
     props.onChange(!props.value);
   };
