@@ -29,12 +29,18 @@ export default function buildQuery(formData: QueryFormData, options: any) {
     };
 
     if (drillDown) {
-      const ownState = <OwnState>options.ownState;
       const groupby = <string[]>formData.groupby;
+      const ownState = <OwnState>options.ownState || {
+        drilldown: DrillDown.fromHierarchy(groupby),
+      };
       queryObject = {
         ...queryObject,
         ...(drillDown && {
           groupby: [DrillDown.getColumn(ownState.drilldown, groupby)],
+          // filters: [
+          //   ...(baseQueryObject.filters || []),
+          //   ...DrillDown.getFilters(ownState.drilldown, groupby),
+          // ],
           filters: [
             ...(baseQueryObject.filters || []),
             ...DrillDown.getFilters(ownState.drilldown, groupby),
